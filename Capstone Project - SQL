@@ -1,0 +1,32 @@
+!pip install sqlalchemy==1.3.9
+!pip install ibm_db_sa
+!pip install ipython-sql
+
+%load_ext sql
+
+%sql ibm_db_sa://wzf08322:ueXYepcYNnElQRV6@0c77d6f2-5da9-48a9-81f8-86b520b87518.bs2io90l08kqb1od8lcg.databases.appdomain.cloud:31198/bludb?security=SSL
+
+%sql select distinct launch_site from SPACEXDATASET;
+
+%sql select * from SPACEXDATASET where launch_site like 'CCA%' limit 5;
+
+%sql select sum(payload_mass__kg_) as total_payload_mass from SPACEXDATASET where customer = 'NASA (CRS)';
+
+%sql select avg(payload_mass__kg_) as average_payload_mass from SPACEXDATASET where booster_version like '%F9 v1.1%';
+
+%sql select min(date) as first_successful_landing from SPACEXDATASET where landing__outcome = 'Success (ground pad)';
+
+%sql select booster_version from SPACEXDATASET where landing__outcome = 'Success (drone ship)' and payload_mass__kg_ between 4000 and 6000;
+
+%sql select mission_outcome, count(*) as total_number from SPACEXDATASET group by mission_outcome;
+
+%sql select booster_version from SPACEXDATASET where payload_mass__kg_ = (select max(payload_mass__kg_) from SPACEXDATASET);
+
+%%sql select monthname(date) as month, date, booster_version, launch_site, landing__outcome from SPACEXDATASET
+      where landing__outcome = 'Failure (drone ship)' and year(date)=2015;
+
+%%sql select landing__outcome, count(*) as count_outcomes from SPACEXDATASET
+      where date between '2010-06-04' and '2017-03-20'
+      group by landing__outcome
+      order by count_outcomes desc;
+
